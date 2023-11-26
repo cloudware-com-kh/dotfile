@@ -1,0 +1,18 @@
+#!/bin/sh
+P=$(tmux show -wqv @panel1)
+if [ -n "$P" ] && tmux lsp -F'#{pane_id}' | grep -q ^$P; then
+	tmux killp -t$P
+	tmux set -wu @panel1
+else
+	P=$(tmux splitw -v -p 20 -PF'#{pane_id}')
+	tmux set -w @panel1 "$P"
+fi
+
+P=$(tmux show -wqv @panel2)
+if [ -n "$P" ] && tmux lsp -F'#{pane_id}' | grep -q ^$P; then
+	tmux killp -t$P
+	tmux set -wu @panel2
+else
+	P=$(tmux splitw -h -PF'#{pane_id}')
+	tmux set -w @panel2 "$P"
+fi
