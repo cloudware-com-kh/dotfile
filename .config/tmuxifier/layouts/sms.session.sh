@@ -6,8 +6,7 @@ session_root "~/Documents/GitHub/cloudware-com-kh/sms/"
 # argument is given, session name will be based on layout file name.
 if initialize_session "sms"; then
 	new_window "sms-window"
-	split_v 50
-	split_h 66
+	split_v 25
 	split_h
 	select_pane 1
 	select_pane 0

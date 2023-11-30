@@ -7,7 +7,6 @@ session_root "~/Documents/Projects/luca-martella/aspen-admin-backend/"
 if initialize_session "aspen-be"; then
 	new_window "aspen-admin-backend-window"
 	split_v 50
-	split_h 66
 	split_h
 	select_pane 1
 	select_pane 0
