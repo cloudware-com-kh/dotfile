@@ -97,10 +97,12 @@
 
 ;; Register file extensions
 ;;
+
+;; ("\\.html$" . "html")
 (add-to-list 'auto-mode-alist '("\\.sface\\'" . web-mode))
-(add-to-list 'auto-mode-alist '( "\\.(l|h)?eex\\'". web-mode))
+(add-to-list 'auto-mode-alist '( "\\.heex\\'". web-mode))
 ;; Associate language engine
-;;
+
 (after! lsp
   (after! web-mode
     (add-to-list 'web-mode-engines-alist '("elixir" . "\\.(l|h)?eex\\'"))
@@ -142,3 +144,8 @@
   (map! :leader
         :desc "Zoom window"
         "zz" #'zoom-window-zoom))
+(setq projectile-enable-caching nil)
+
+(use-package! lsp-tailwindcss
+  :init
+  (setq lsp-tailwindcss-add-on-mode t))
