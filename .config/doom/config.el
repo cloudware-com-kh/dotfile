@@ -45,13 +45,15 @@
   :hook (elixir-mode . lsp)
   :config
   (after! lsp-mode
-    (setq lsp-enable-file-watchers nil))
+    (setq lsp-enable-file-watchers nil)
+    (setq lsp-elixir-suggest-specs nil)
+    )
   )
 ;; Format all buffer
 ;;
 (map! :leader
       :desc "Format buffer"
-      "c f" #'format-all-buffer)
+      "c f" #'lsp-format-buffer)
 ;; Increase window size
 ;;
 (map!
@@ -73,7 +75,7 @@
   (map! :leader
         :desc "Zoom window"
         "zz" #'zoom-window-zoom))
-(setq projectile-enable-caching nil)
+;; (setq projectile-enable-caching nil)
 
 (use-package lsp-tailwindcss
   :ensure t
@@ -114,19 +116,21 @@
 
 ;; Elixir custom lsp
 ;;
-(after! lsp
-  (lsp-register-client
-   (make-lsp-client
-    :new-connection (lsp-stdio-connection
-                     (lambda ()
-                       `(,(or (when (f-exists? lsp-elixir-local-server-command)
-                                lsp-elixir-local-server-command)
-                              (or (executable-find
-                                   (cl-first lsp-elixir-server-command))
-                                  (lsp-package-path 'elixir-ls))
-                              "language_server.bat")
-                         ,@(cl-rest lsp-elixir-server-command))))
-    :major-modes '(web-mode) ; Add any other relevant major modes
-    :server-id 'elixir
-    :priority -1
-    :add-on? t)))
+;; (after! lsp
+;;   (lsp-register-client
+;;    (make-lsp-client
+;;     :new-connection (lsp-stdio-connection
+;;                      (lambda ()
+;;                        `(,(or (when (f-exists? lsp-elixir-local-server-command)
+;;                                 lsp-elixir-local-server-command)
+;;                               (or (executable-find
+;;                                    (cl-first lsp-elixir-server-command))
+;;                                   (lsp-package-path 'elixir-ls))
+;;                               "language_server.bat")
+;;                          ,@(cl-rest lsp-elixir-server-command))))
+;;     :major-modes '(web-mode) ; Add any other relevant major modes
+;;     :server-id 'elixir
+;;     :priority -1
+;;     :add-on? t)))
+
+(setq! lsp-elixir-ls-version "v0.18.1")
