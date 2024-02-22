@@ -1,3 +1,4 @@
+;;
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
 
@@ -24,20 +25,10 @@
 ;;
 (setq display-line-numbers-type 'relative)
 
-;; Assign `mode`' to file extension
-;;
-(use-package! web-mode
-  :mode (("\\.sface$" . web-mode))
-  :config
-  (add-to-list 'web-mode-engines-alist '("elixir" . "\\.sface$" ))
-  (add-to-list 'web-mode-engines-alist '("elixir" . "\\.heex$" ))
-  )
-
 ;; Assign lsp language ID
 ;;
 (after! lsp-mode
   (add-to-list 'lsp-language-id-configuration '(web-mode . "html")))
-
 
 ;; Auto sart lsp
 ;;
@@ -49,6 +40,7 @@
     (setq lsp-elixir-suggest-specs nil)
     )
   )
+
 ;; Format all buffer
 ;;
 (map! :leader
@@ -82,55 +74,14 @@
   :init
   (setq lsp-tailwindcss-add-on-mode t)
   :config
-  (add-to-list 'lsp-tailwindcss-major-modes 'elixir-mode))
+  (add-to-list 'lsp-tailwindcss-major-modes 'web-mode))
 
-;; Assumes web-mode and elixir-mode are already set up
-;;
-
-;; Install the required packages if not already installed
-
-(after! lsp
-  (lsp-register-client
-   (make-lsp-client
-    :new-connection (lsp-stdio-connection
-                     (lambda ()
-                       (cons (lsp-package-path 'html-language-server)
-                             lsp-html-server-command-args)))
-    :major-modes '(elixir-mode) ; Add any other relevant major modes
-    :server-id 'html
-    :priority -1
-    :add-on? t)))
-
-(after! lsp
-  (lsp-register-client
-   (make-lsp-client
-    :new-connection (lsp-stdio-connection
-                     (lambda ()
-                       `(,(or (executable-find (cl-first lsp-emmet-ls-command))
-                              (lsp-package-path 'emmet-ls))
-                         ,@(cl-rest lsp-emmet-ls-command))))
-    :major-modes '(elixir-mode) ; Add any other relevant major modes
-    :server-id 'emmet
-    :priority -1
-    :add-on? t)))
-
-;; Elixir custom lsp
-;;
-;; (after! lsp
-;;   (lsp-register-client
-;;    (make-lsp-client
-;;     :new-connection (lsp-stdio-connection
-;;                      (lambda ()
-;;                        `(,(or (when (f-exists? lsp-elixir-local-server-command)
-;;                                 lsp-elixir-local-server-command)
-;;                               (or (executable-find
-;;                                    (cl-first lsp-elixir-server-command))
-;;                                   (lsp-package-path 'elixir-ls))
-;;                               "language_server.bat")
-;;                          ,@(cl-rest lsp-elixir-server-command))))
-;;     :major-modes '(web-mode) ; Add any other relevant major modes
-;;     :server-id 'elixir
-;;     :priority -1
-;;     :add-on? t)))
-
-(setq! lsp-elixir-ls-version "v0.18.1")
+(setq! lsp-elixir-ls-version "v0.19.0")
+;; accept completion from copilot and fallback to company
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
