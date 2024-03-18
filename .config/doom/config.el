@@ -91,36 +91,27 @@
 ;;
 (setq display-line-numbers-type 'relative)
 
-;; Install necessary packages
-;; User elixir lsp wich define in web-mode "elixir"
+;; Assign lsp language ID
 ;;
+(after! lsp-mode
+  (add-to-list 'lsp-language-id-configuration '(web-mode . "html")))
 
-;; Register file extensions
-;;
-(add-to-list 'auto-mode-alist '("\\.sface\\'" . web-mode))
-(add-to-list 'auto-mode-alist '( "\\.(l|h)?eex\\'". web-mode))
-;; Associate language engine
-;;
-(after! lsp
-  (after! web-mode
-    (add-to-list 'web-mode-engines-alist '("elixir" . "\\.(l|h)?eex\\'"))
-    (add-to-list 'web-mode-engines-alist '("elixir" . "\\.sface\\'"))
-    (setq lsp-language-id-configuration
-          (append lsp-language-id-configuration
-                  '((web-mode . "elixir"))))))
 ;; Auto sart lsp
 ;;
 (use-package! elixir-mode
   :hook (elixir-mode . lsp)
   :config
   (after! lsp-mode
-    (setq lsp-enable-file-watchers nil))
+    (setq lsp-enable-file-watchers nil)
+    (setq lsp-elixir-suggest-specs nil)
+    )
   )
+
 ;; Format all buffer
 ;;
 (map! :leader
       :desc "Format buffer"
-      "c f" #'format-all-buffer)
+      "c f" #'lsp-format-buffer)
 ;; Increase window size
 ;;
 (map!
@@ -142,3 +133,21 @@
   (map! :leader
         :desc "Zoom window"
         "zz" #'zoom-window-zoom))
+;; (setq projectile-enable-caching nil)
+
+(use-package lsp-tailwindcss
+  :ensure t
+  :init
+  (setq lsp-tailwindcss-add-on-mode t)
+  :config
+  (add-to-list 'lsp-tailwindcss-major-modes 'web-mode))
+
+(setq! lsp-elixir-ls-version "v0.20.0")
+;; accept completion from copilot and fallback to company
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
